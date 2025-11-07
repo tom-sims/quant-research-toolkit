@@ -1,0 +1,40 @@
+import numpy as np
+import pandas as pd
+
+def VaR_historical(returns, weights=None, conf_int=0.95):
+
+    if isinstance(returns, pd.Series):
+            port = returns.dropna().copy()
+
+    elif isinstance(returns, pd.DataFrame):
+        df = returns.dropna(how="all")
+        if df.empty:
+            raise ValueError("DataFrame returns contains no data.")
+
+        n = df.shape[1]
+        if weights is None:
+            w = np.ones(n) / n
+        else:
+            w = np.asarray(weights, dtype=float).ravel()
+            if w.size != n:
+                raise ValueError(f"weights length {w.size} != number of columns {n}")
+            w = w / w.sum()
+
+        port = (df * w).sum(axis=1).dropna()
+
+    else:
+        raise TypeError("returns must be a pandas Series or DataFrame")
+
+    if port.empty:
+        raise ValueError("Portfolio return series is empty after cleaning.")
+    
+    if conf_int>1 or conf_int<0:
+        raise ValueError("Confidence interval must be between 0 and 1")
+    
+    port_quant = 1-conf_int
+    q = port.quantile(port_quant)   
+    VaR = -float(q)                 
+    return VaR
+
+
+
