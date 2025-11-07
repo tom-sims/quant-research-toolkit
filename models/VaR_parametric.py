@@ -2,6 +2,24 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 
+# === PARAMETRIC VaR ===
+# returns : Series OR DataFrame (daily returns)
+# weights : optional if DataFrame (will be normalised)
+#
+# How to call:
+# r = prices.pct_change().dropna()
+# VaR_parametric(r, conf_int=0.95)
+#
+# What it assumes:
+# returns are normal (bell curve)
+# uses mean & std only
+#
+# How to interpret:
+# fast, closed-form estimate
+# good when distribution is close to normal
+# VaR = -(μ − zσ)
+
+
 def VaR_parametric(returns, weights=None, conf_int=0.95, periods_of_year = 1):
 
     if isinstance(returns, pd.Series):

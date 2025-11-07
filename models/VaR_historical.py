@@ -1,6 +1,24 @@
 import numpy as np
 import pandas as pd
 
+# === HISTORICAL VaR ===
+# returns : Series OR DataFrame (daily returns)
+# weights : optional if DataFrame (will be normalised)
+#
+# How to call:
+# r = prices.pct_change().dropna()
+# VaR_historical(r, conf_int=0.95)
+#
+# What it does:
+# purely non-parametric
+# looks at actual historical return distribution
+#
+# How to interpret:
+# VaR = loss threshold at X confidence
+# VaR_historical(...,conf_int=0.95)
+# → "there is a 5% chance the portfolio loses MORE than this amount in 1 day"
+
+
 def VaR_historical(returns, weights=None, conf_int=0.95):
 
     if isinstance(returns, pd.Series):
