@@ -1,2 +1,37 @@
 # quant-research-toolkit
-Quant toolkit used to support PM and fundamental teams. Includes FF5 factor regressions, earnings quality (accruals), Sharpe/Treynor, and 3 forms of VaR. Used to test stock ideas, separate alpha from factor exposure, and estimate risk. Built + iterated through weekly internal quant meetings.
+A Python toolkit for portfolio analytics and investment research.
+This repo includes:
+Fama-French 5-Factor model (alpha, beta, style tilts)
+
+
+Sharpe Ratio (risk-adjusted return)
+
+
+Treynor Ratio (return per unit of market beta)
+
+
+Value at Risk models
+
+
+Historical
+
+
+Parametric
+
+
+Monte Carlo
+
+
+The goal of this toolkit is to take a stock or portfolio, run it through the core quant diagnostics and return interpretable outputs that help with real investment decisions.
+I use these tools to assist the PM and both Macro + Equity teams by converting qualitative ideas into numbers — so we can see:
+where returns actually come from (factors vs true alpha)
+
+
+how much risk the position is taking per return
+
+
+how vulnerable the name is to downside
+
+
+
+
