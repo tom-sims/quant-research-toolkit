@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from scipy.stats import norm
 
 # === MONTE CARLO VaR ===
 # returns : Series OR DataFrame (daily returns)
@@ -20,8 +19,19 @@ from scipy.stats import norm
 # same interpretation as historical:
 # 95% VaR = one day loss you only expect to exceed 5% of the time
 
+def get_possible_returns(mean, std, rng):
+    if rng is None:
+        rng = np.random.default_rng()
+    return rng.normal(mean, std)
 
-def VaR_monteCarlo(returns, weights=None, conf_int=0.95, periods_of_year = 1):
+
+def VaR_monteCarlo(returns, days, weights=None, conf_int=0.95, sims = 10000, random_state = None):
+    if not isinstance(days, int) or days<=0:
+        raise ValueError("Days must be a positive integer")
+    if not isinstance(sims, int) or sims<=0:
+        raise ValueError("Sims must be a positive integer")
+    if conf_int>=1 or conf_int<=0:
+        raise ValueError("Confidence interval must be between 0 and 1")
 
     if isinstance(returns, pd.Series):
             port = returns.dropna().copy()
@@ -48,17 +58,22 @@ def VaR_monteCarlo(returns, weights=None, conf_int=0.95, periods_of_year = 1):
     if port.empty:
         raise ValueError("Portfolio return series is empty after cleaning.")
     
-    if conf_int>=1 or conf_int<=0:
-        raise ValueError("Confidence interval must be between 0 and 1")
-    
-    rp = port.mean() * periods_of_year
-    sd = port.std(ddof=1) * np.sqrt(periods_of_year)
+    rp = float(port.mean())
+    std = float(port.std(ddof=1))
 
-    q = 1-conf_int
-    
-    simulated_returns = np.random.normal(rp,sd,10000)
+    values = []
 
-    VaR = -1*np.quantile(simulated_returns, q)
+    rng = np.random.default_rng(random_state)
 
+    for _ in range(sims):
+        value = 1
+        for _ in range(days):
+            r = get_possible_returns(rp, std, rng)
+            value *= (1+r)
+        values.append(value)
+
+    values = np.array(values)
+    losses = 1 - values
+    VaR = np.quantile(losses, conf_int)
     return VaR
 
