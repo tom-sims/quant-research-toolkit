@@ -1,23 +1,24 @@
 import numpy as np
 import pandas as pd
 
-# === MONTE CARLO VaR ===
+# === MONTE CARLO VaR (full-path, simple returns) ===
 # returns : Series OR DataFrame (daily returns)
-# weights : optional if DataFrame (will be normalised)
+# weights : optional if DataFrame (normalised)
 #
 # How to call:
 # r = prices.pct_change().dropna()
-# VaR_monteCarlo(r, conf_int=0.95)
+# VaR_monteCarlo(r, days=20, conf_int=0.95)
 #
 # What it does:
-# fits μ and σ from history then simulates thousands of random future returns
-#
-# Why useful:
-# flexible – can later replace normal sampling with skewed, t-dist, factor model etc
+#  • estimates DAILY μ and σ from historical daily returns
+#  • draws daily normal shocks and compounds simple returns over `days`
+#  • builds the terminal value distribution from `sims` paths
+#  • VaR = selected loss percentile relative to current value = 1.0
 #
 # How to interpret:
-# same interpretation as historical:
-# 95% VaR = one day loss you only expect to exceed 5% of the time
+#  • VaR(95%, N days) = loss that is only exceeded 5% of the time over that N-day horizon
+#    e.g. VaR=0.04 means ≈4% potential loss over N days at 95% confidence
+
 
 def get_possible_returns(mean, std, rng):
     if rng is None:
