@@ -89,3 +89,4 @@ def VaR_monteCarlo(returns, days, weights=None, conf_int=0.95, sims = 10000, ran
     VaR = np.quantile(losses, conf_int)
     return VaR
 
+
